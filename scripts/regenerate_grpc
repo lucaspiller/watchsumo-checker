@@ -1,0 +1,2 @@
+#!/bin/sh
+PATH="$PATH:$GOPATH/bin" protoc -I proto proto/checker_service.proto --go_out=plugins=grpc:proto

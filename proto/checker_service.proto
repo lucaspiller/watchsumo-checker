@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package ws.grpc;
+
+service CheckerService {
+  rpc Listen(CheckerHello) returns (stream CheckRequest) {}
+  rpc Result(CheckResponse) returns (Void) {}
+}
+
+enum Status {
+  UP = 0;
+  DOWN = 1;
+  UNKNOWN = 2;
+}
+
+message Void {}
+
+message CheckerHello {
+  string id = 1;
+  string location = 2;
+  string country = 3;
+}
+
+message Header {
+  string key = 1;
+  string value = 2;
+}
+
+message CheckRequest {
+  string caller = 1;
+  string monitoringId = 2;
+  string method = 3;
+  string url = 4;
+
+  //repeated Header requestHeaders = 5;
+  //string requestBody = 6;
+
+  int32 timeout = 7;
+
+  //repeated Assertion assertions = 8;
+
+  message Options {
+    bool getFallback = 1;
+    bool ignoreTlsErrors = 2;
+    bool followRedirects = 3;
+  }
+
+  Options options = 9;
+}
+
+message CheckResponse {
+  string caller = 1;
+  string monitoringId = 2;
+  //string regionId = 3;
+  Status status = 4;
+
+  string method = 5;
+  string url = 6;
+
+  int32 statusCode = 7;
+  repeated Header headers = 8;
+  string body = 9;
+  int32 time = 10;
+
+  message Certificate {
+    string serialString = 1;
+    int32 algorithm = 2;
+    string validFrom = 3;
+    string validTo = 4;
+    string subject = 5;
+    string issuer = 6;
+    bytes fingerprintSHA256 = 7;
+    bytes serial = 8;
+  }
+
+  Certificate certificate = 11;
+
+  message Timing {
+    int32 dns = 1;
+    int32 connecting = 2;
+    int32 tls = 3;
+    int32 sending = 4;
+    int32 waiting = 5;
+    int32 receiving = 6;
+  }
+
+  Timing timing = 12;
+
+  //repeated AssertionResult assertions = 13;
+
+  string error = 14;
+  string timestamp = 15;
+
+  string proto = 16;
+  string statusText = 17;
+}
